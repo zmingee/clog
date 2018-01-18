@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "minunit.h"
-#include "test_log.h"
+#include "test_clog.h"
 
 void test_setup() {}
 
