@@ -1,4 +1,4 @@
-TARGET := clog
+TARGET := libclog
 BUILD_DIR := build
 C_SRCS := $(wildcard lib/*.c)
 C_OBJS := $(C_SRCS:.c=.o)
@@ -13,7 +13,7 @@ STD := -std=c99 -pedantic
 WARN := -Wall -W -Wextra
 
 CFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
-CFLAGS += -DVERSION=\"${VERSION}\" -g $(OPTIMIZATION) $(STD) $(WARN)
+CFLAGS += -DVERSION=\"${VERSION}\" -c -fpic $(OPTIMIZATION) $(STD) $(WARN)
 LDFLAGS += $(foreach libdir,$(DIRS), -L$(libdir))
 
 .PHONY: all check clean distclean $(TARGET)
@@ -21,19 +21,15 @@ LDFLAGS += $(foreach libdir,$(DIRS), -L$(libdir))
 all: builddir $(TARGET)
 
 $(TARGET): $(C_OBJS)
-	$(CC) $(C_OBJS) -o $(BUILD_DIR)/$(TARGET) $(LDFLAGS)
+	$(CC) -shared $(C_OBJS) -o $(BUILD_DIR)/$(TARGET).so $(LDFLAGS)
 
 install: all
-	@echo installing executable file to $(PREFIX)/bin
-	@mkdir -p $(PREFIX)/bin
-	@cp -f $(BUILD_DIR)/$(TARGET) $(PREFIX)/bin
-	@chmod 755 $(PREFIX)/bin/$(TARGET)
-	@mkdir -p $(MANPREFIX)/man1
-	@sed "s/VERSION/$(VERSION)/g" < $(TARGET).1 > $(MANPREFIX)/man1/$(TARGET).1
-	@chmod 644 $(MANPREFIX)/man1/$(TARGET).1
-	@echo installing config file to /etc/$(TARGET)/$(TARGET).conf
-	@mkdir -p /etc/$(TARGET)
-	@cp -f conf/$(TARGET).conf /etc/$(TARGET)/$(TARGET).conf
+	@echo installing shared library to $(PREFIX)/lib
+	@mkdir -p $(PREFIX)/lib
+	@cp -f build/$(TARGET).so $(PREFIX)/lib/$(TARGET).so
+	@echo installing include header to $(PREFIX)/include
+	@mkdir -p $(PREFIX)/include
+	@cp -f lib/clog.h $(PREFIX)/include/clog.h
 
 uninstall:
 	@echo removing executable file from $(PREFIX)/bin

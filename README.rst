@@ -41,14 +41,28 @@ environment.
 
     make clean
     make
+    sudo make install
 
 
-The ``Makefile`` does not currently actually support installing the shared
-library. It's a simple tweak, just give me a bit. If you're in a hurry,
-just use the .c/.h files directly in your program for now.
+Adjust ``config.mk`` to your liking. By default, a prefix of ``/usr/local/``
+will be used for all install paths.
 
 
 Usage
 =====
 
-TODO
+Make sure to include clog.h in your header to use.
+
+::
+
+    #include <clog.h>
+
+
+    int main(int argc, char *argv[]) {
+        LOG_PRINT(INFO, "Hello world!");
+
+        return 0;
+    }
+
+
+See header for documentation.
